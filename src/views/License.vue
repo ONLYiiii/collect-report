@@ -48,7 +48,6 @@
             <div v-show="tab == 3" class="py-6">
               <v-sheet align="center">
                 <h2 class="mb-3">รูปภาพของผู้ได้รับอนุญาต</h2>
-                <Image />
               </v-sheet>
             </div>
           </v-scroll-x-transition>
@@ -145,7 +144,6 @@
 <script setup>
 import Select from './components/Select.vue'
 import LicenseDetail from './components/LicenseDetail.vue'
-import Image from '@/components/Image.vue'
 import api from '@/helpers/api'
 import * as utils from '@/helpers/utils'
 </script>
