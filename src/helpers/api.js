@@ -111,40 +111,48 @@ const apiService = {
     }
   },
 
-
   //api
-  async importCollect(data) {
+  async getReport(Rcode, Start, End, Subreg, Year, No) {
+    let api = `/api/collect/manage/request/reportAccSearch/${Rcode}/${Start}/${End}?`
+    if (Subreg) {
+      api = api + `subreg=${Subreg}&`
+    }
+    if (Year) {
+      api = api + `year=${Year}&`
+    }
+    if (No) {
+      api = api + `no=${No}`
+    }
     try {
-      return (await axios.post(`/api/collect/manage/license/importLicense`, data))
+      return (await axios.get(api))
     } catch (error) {
       return { status: error.response.data.statusCode }
     }
   },
-  async getCollect(LicSubReg, LicCode) {
+  async getAccount(SubReg, Rcode, LicID) {
     try {
-      return (await axios.get(`/api/collect/license/${LicSubReg}/${LicCode}`)).data
+      return (await axios.get(`/api/collect/manage/request/reportAccountList/${SubReg}/${Rcode}/${LicID}`)).data
     } catch (error) {
       return { status: error.response.request.status }
     }
   },
-  async getCollectID(LicSubReg, LicCode, LicID) {
-    ///api/collect/manage/license/findLicInfoByLicId/
+  async getAccSet(SubReg, Rcode, LicID, AccSet) {
     try {
-      return (await axios.get(`/api/collect/license/${LicSubReg}/${LicCode}/${LicID}`)).data
+      return (await axios.get(`/api/collect/manage/request/reportAccSetList/${SubReg}/${Rcode}/${LicID}/${AccSet}`)).data
     } catch (error) {
       return { status: error.response.request.status }
     }
   },
-  async getRqID(rcode, subreg, Year, No) {
+  async getLicense(SubReg, Rcode, LicID) {
     try {
-      return (await axios.get(`/api/collect/manage/request/selectByRequestId/${rcode}/${subreg}/${Year}/${No}`)).data
+      return (await axios.get(`/api/collect/manage/request/reportLicDetail/${SubReg}/${Rcode}/${LicID}`)).data
     } catch (error) {
       return { status: error.response.request.status }
     }
   },
-  async lastLicID(docPlace, docType) {
+  async getPhoto(SubReg, Rcode, LicID, AccSet, AccNo) {
     try {
-      return (await axios.get(`/api/manage/center/docctl/last/${docPlace}/7/${docType}`)).data
+      return (await axios.get(`/api/collect/manage/request/reportAccSetByNo/${SubReg}/${Rcode}/${LicID}/${AccSet}/${AccNo}`)).data
     } catch (error) {
       return { status: error.response.request.status }
     }

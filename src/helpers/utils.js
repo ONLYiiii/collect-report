@@ -10,6 +10,22 @@ function getSysDate() {
   return `${year}${month}${day}`
 }
 
+function formatLicId(data) {
+  if (data) {
+    let v = data.toString()
+    let [year, no] = [
+      v.substring(0, 4),
+      v.substring(4, 12)
+    ]
+    return `${Number(no)}/${year}`
+  }
+}
+
+function formatPid(data) {
+  let v = data.toString()
+  return `${v.substring(0, 1)}-${v.substring(1, 5)}-${v.substring(5, 10)}-${v.substring(10, 12)}-${v.substring(12, 13)}`
+}
+
 function formatYYYYMMDD(date) {
   if (date) {
     const [day, month, year] = date.split('/')
@@ -259,12 +275,22 @@ function foramtDateString(v, noslad) {
   }
 }
 
+function time(time) {
+  if (time) {
+    let v = time.toString().padStart(6, '0')
+    let [h, m] = [v.substring(0, 2), v.substring(2, 4)]
+    return `${h}.${m}`
+  }
+}
+
 function array(array, what, v) {
   return array.find((item) => item[what] == v)
 }
 
 export {
   getSysDate,
+  formatLicId,
+  formatPid,
   formatYYYYMMDD,
   convertThaiDate,
   redirectToLoginPage,
@@ -285,6 +311,7 @@ export {
   formatNumberToThai,
   formatDateToDisplayWiththaiNumber,
   foramtDateString,
+  time,
   array
 }
 

@@ -1,7 +1,7 @@
 <template>
   <v-sheet class="pt-2">
     <v-row>
-      <v-col cols="12" sm="4" md="3" lg="3">
+      <v-col cols="12" sm="6" md="3" lg="3">
         <v-autocomplete
           v-model="value.FRcode"
           label="สถานที่ออกใบอนุญาต"
@@ -11,10 +11,9 @@
           item-value="code"
           item-title="description"
           hide-details="auto"
-          :disabled="$store.state.Rcode != '0083'"
         />
       </v-col>
-      <v-col cols="12" sm="4" md="3" lg="3">
+      <v-col cols="12" sm="6" md="3" lg="3">
         <v-autocomplete
           v-model="value.LRcode"
           label="อำเภอ/เขต"
@@ -24,25 +23,11 @@
           item-value="code"
           item-title="description"
           hide-details="auto"
-          :disabled="$store.state.Rcode != '0083'"
         />
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="d-flex" cols="12" sm="4" md="3" lg="3">
-        <p class="mt-2 mr-1">มาตรา :</p>
-        <v-radio-group v-model="value.Section" inline hide-details>
-          <v-radio
-            label="6"
-            :value="1"
-            class="mr-2"
-            color="app-color"
-            :disabled="$store.state.Rcode != '0083'"
-          />
-          <v-radio label="8" :value="2" color="app-color" />
-        </v-radio-group>
-      </v-col>
-      <v-col cols="12" sm="4" md="3" lg="3">
+      <v-col cols="12" sm="6" md="4">
         <v-select
           v-model="value.Permissions"
           label="ประเภทใบอนุญาต"
@@ -52,7 +37,7 @@
           hide-details="auto"
         />
       </v-col>
-      <v-col class="d-flex" cols="12" sm="6" md="4" lg="4">
+      <v-col class="d-flex" cols="12" sm="6" md="4">
         <v-text-field
           v-model="value.No"
           :label="$route.name != 'license' ? 'ใบอนุญาตเลขที่' : 'คำขอเลขที่'"
@@ -72,23 +57,41 @@
           hide-details="auto"
         />
       </v-col>
-
+    </v-row>
+    <v-row>
+      <v-col cols="12" sm="6" md="3">
+        <DatePicker
+          v-model="value.StartDate"
+          label="วันที่ออกใบอนุญาต"
+          density="compact"
+          variant="outlined"
+          hide-details
+        />
+      </v-col>
+      <v-col cols="12" sm="6" md="3">
+        <DatePicker
+          v-model="value.EndDate"
+          label="จนถึงวันที่"
+          density="compact"
+          variant="outlined"
+          hide-details
+        />
+      </v-col>
       <v-col
-        :class="$vuetify.display.xs ? 'd-flex justify-end' : ''"
+        :class="$vuetify.display.smAndDown ? 'd-flex justify-end' : ''"
         cols="12"
         md="2"
-        sm="2"
         lg="2"
       >
         <v-btn
-          class="px-10"
-          color="primary"
-          variant="outlined"
-          size="41px"
+          class="px-6"
+          color="#444"
+          height="41px"
+          prepend-icon="mdi-magnify"
           rounded
           @click="choose"
         >
-          ตกลง
+          ค้นหา
         </v-btn>
       </v-col>
     </v-row>
@@ -96,9 +99,10 @@
 </template>
 <script setup>
 import cc_Items from '@/helpers/itemJson'
+import api from '@/helpers/api'
+import * as utils from '@/helpers/utils'
 </script>
 <script>
-import api from '@/helpers/api'
 export default {
   props: {
     data: {},
@@ -108,67 +112,60 @@ export default {
       value: {
         FRcode: null,
         LRcode: null,
-        Section: null,
         Permissions: null,
-        Check: false,
         No: null,
         Year: null,
+        StartDate: null,
+        EndDate: null,
+        Data: [],
       },
       select2: [
-        { value: 1, title: 'ร.3 ขออนุญาตจัดให้มีการเรี่ยไร ' },
-        { value: 2, title: 'ร.4 ขออนุญาตทำการเรี่ยไร' },
+        { value: 11, title: 'ร.3 ขออนุญาตจัดให้มีการเรี่ยไร มาตรา 6' },
+        { value: 12, title: 'ร.3 ขออนุญาตจัดให้มีการเรี่ยไร มาตรา 8' },
       ],
     }
   },
   methods: {
     async choose() {
-      if (!this.value.Section || !this.value.Permissions) {
+      if (!this.value.FRcode || !this.value.LRcode) {
         this.$swal({
           icon: 'warning',
           title: 'เกิดข้อผิดพลาด',
-          text: 'โปรดเลือกมาตราและประเภทคำขอ',
+          text: 'โปรดเลือกสถานที่ออกใบอนุญาต',
         })
-      } else if (!this.value.No || !this.value.Year) {
+      } else if (!this.value.StartDate || !this.value.EndDate) {
         this.$swal({
           icon: 'warning',
           title: 'เกิดข้อผิดพลาด',
-          text: 'โปรดระบุเลขใบอนุญาต',
+          text: 'โปรดระบุเลขวันที่ออใบอนุญาต',
         })
       } else {
         this.$store.state.loading = true
-        let status = await api.getCollectID(
-          `${this.value.Permissions}${this.value.Section}`,
+
+        let getData = await api.getReport(
           this.value.LRcode == '0083'
             ? '0083'
             : `${this.value.FRcode}${this.value.LRcode}`,
-          `${this.value.Year}${this.value.No.padStart(8, '0')}`
+          Number(utils.formatYYYYMMDD(this.value.StartDate)),
+          Number(utils.formatYYYYMMDD(this.value.EndDate)),
+          this.value.Permissions,
+          this.value.Year,
+          this.value.No
         )
         this.$store.state.loading = false
-        if (status.status == 404) {
-          this.$swal({
-            icon: 'info',
-            title: 'ไม่พบข้อมูลใบอนุญาต',
-            text: 'สามารถเพิ่มใบอนุญาตกับเลขที่ใบอนุญาตนี้',
-            showCancelButton: true,
-            confirmButtonText: 'ตกลง',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              this.value.Check = true
-            }
-          })
-        } else if (status.pid) {
+
+        if (getData.data.length != 0) {
+          this.value.Data = getData.data
+        } else if (getData.data.length == 0) {
           this.$swal({
             icon: 'warning',
-            title: 'เกิดข้อผิดพลาด',
-            text: 'เลขที่ใบอนุญาตนี้มีอยู่ในระบบแล้ว',
+            title: 'ไม่พบข้อมูล',
           })
-          this.value.Check = false
         } else {
           this.$swal({
             icon: 'error',
             title: 'เกิดข้อผิดพลาด',
           })
-          this.value.Check = false
         }
       }
     },
@@ -178,19 +175,15 @@ export default {
     async 'value.FRcode'(v) {
       this.value.LRcode = null
       this.$store.state.aa_Items = []
-      if (this.$store.state.Rcode != '0083') {
+      if (v != '10') {
         this.$store.state.aa_Items = await api.getAA(v)
       }
-
-      if (this.$store.state.Rcode == '0083' && v != '10') {
-        this.$store.state.aa_Items = await api.getAA(v)
-      }
-
-      if (this.$store.state.Rcode == '0083' && v == '10') {
+      if (v == '10') {
         this.$store.state.aa_Items.unshift({
           code: '0083',
-          description: 'ศูนย์บริการประชาชน',
+          description: 'ศูนย์บริการประชาชนฯ',
         })
+        this.value.LRcode = '0083'
       }
     },
   },
@@ -216,8 +209,6 @@ export default {
       this.$store.state.aa_Items = await api.getAA(this.value.FRcode)
       this.value.LRcode = Rcode.substring(2, 4)
     }
-
-    this.value.Section = Rcode == '0083' ? null : 2
   },
 }
 </script>
