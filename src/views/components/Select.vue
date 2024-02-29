@@ -11,18 +11,20 @@
           item-value="code"
           item-title="description"
           hide-details="auto"
+          readonly
         />
       </v-col>
       <v-col cols="12" sm="6" md="3" lg="3">
         <v-autocomplete
           v-model="value.LRcode"
-          label="อำเภอ/เขต"
+          label="อำเภอ"
           variant="outlined"
           density="compact"
           :items="$store.state.aa_Items"
           item-value="code"
           item-title="description"
           hide-details="auto"
+          readonly
         />
       </v-col>
     </v-row>

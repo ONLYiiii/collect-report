@@ -1,9 +1,11 @@
 <template>
   <v-container class="mx-2" fluid>
+    <!-- First Order -->
     <v-expand-transition>
       <Select v-model="select" :data="select" v-show="!select.Data.length" />
     </v-expand-transition>
 
+    <!-- Second Order -->
     <v-expand-transition>
       <div v-if="select.Data.length && !DataAcc.length">
         <v-sheet class="mb-6" align="center">
@@ -52,7 +54,8 @@
       </div>
     </v-expand-transition>
 
-    <v-expand-transition>
+    <!-- Third Order -->
+    <!-- <v-expand-transition>
       <v-sheet
         elevation="1"
         rounded="lg"
@@ -78,10 +81,11 @@
           </template>
         </v-data-table>
       </v-sheet>
-    </v-expand-transition>
+    </v-expand-transition> -->
 
+    <!-- Fourth Order -->
     <v-expand-transition>
-      <div v-if="DataAccSet.length">
+      <div v-if="DataAcc.length && Object.keys(DataLicense).length">
         <v-sheet class="mx-4 mb-4">
           <v-sheet align="center">
             <h3 class="mb-4">รายงาน ประกาศยอดรับจ่ายเงินและทรัพย์สิน</h3>
@@ -207,7 +211,7 @@
                     ? item.accType == 1
                       ? item.accAmount
                       : '-'
-                    : item.income
+                    : item.income.toLocaleString()
                 }}
               </div>
             </template>
@@ -226,7 +230,7 @@
                     ? item.accType == 2
                       ? item.accAmount
                       : '-'
-                    : item.expenses
+                    : item.expenses.toLocaleString()
                 }}
               </div>
             </template>
@@ -242,6 +246,7 @@
       </div>
     </v-expand-transition>
 
+    <!-- Footer -->
     <v-slide-y-reverse-transition>
       <v-footer app color="white" class="pa-4" v-if="select.Data.length">
         <v-btn
@@ -268,6 +273,7 @@
         </v-btn>
       </v-footer>
     </v-slide-y-reverse-transition>
+    <PictureDialog v-model="pictureDialog" :picture-base64="pictureBase64" />
   </v-container>
 </template>
 <script setup>
@@ -276,9 +282,13 @@ import api from '@/helpers/api'
 import * as utils from '@/helpers/utils'
 import cc_Items from '@/helpers/itemJson'
 import print from '@/prints/Income'
+import PictureDialog from '@/views/components/PictureDialog.vue'
 </script>
 <script>
 export default {
+  components: {
+    PictureDialog,
+  },
   data() {
     return {
       tab: 1,
@@ -289,7 +299,8 @@ export default {
       pageAccSet: 1,
       perAccSet: 10,
       Date: null,
-
+      pictureDialog: false,
+      pictureBase64: null,
       select: {
         FRcode: null,
         LRcode: null,
@@ -403,11 +414,13 @@ export default {
   },
 
   methods: {
-    async choose(item, row) {
+    async choose() {
       //const v = row.item
       //let getAcc = await api.getAccount(v.licSubreg, v.licRcode, v.licId)
       let getAcc = await api.getAccount(12, 1301, 256700000007)
       this.DataAcc = getAcc
+
+      this.chooseAcc(this.DataAcc[0], 0)
     },
 
     async chooseAcc(v, index) {
@@ -459,14 +472,39 @@ export default {
       console.log(
         await api.getPhoto(v.licSubreg, v.licRcode, v.licId, v.accSet, v.accNo)
       )
+      try {
+        const response = await api.getPhoto(
+          v.licSubreg,
+          v.licRcode,
+          v.licId,
+          v.accSet,
+          v.accNo
+        )
+        if (response.accPicture.startsWith('data:image')) {
+          this.pictureBase64 = response.accPicture
+          this.pictureDialog = true
+        } else {
+          window.sessionStorage.setItem('fileBase64', response.accPicture)
+          window.open('/pdf')
+        }
+      } catch (error) {
+        console.error('Error fetching getPhoto:', error)
+      }
     },
 
     back() {
+      // if (this.select.Data && !this.DataAcc.length) {
+      //   this.select.Data = []
+      // } else if (this.DataAcc.length && !this.DataAccSet.length) {
+      //   this.DataAcc = []
+      // } else {
+      //   this.DataAccSet = []
+      //   this.DataLicense = []
+      // }
       if (this.select.Data && !this.DataAcc.length) {
         this.select.Data = []
-      } else if (this.DataAcc.length && !this.DataAccSet.length) {
-        this.DataAcc = []
       } else {
+        this.DataAcc = []
         this.DataAccSet = []
         this.DataLicense = []
       }
