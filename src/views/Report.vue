@@ -209,7 +209,7 @@
                 {{
                   !item.income
                     ? item.accType == 1
-                      ? item.accAmount
+                      ? item.accAmount.toLocaleString()
                       : '-'
                     : item.income.toLocaleString()
                 }}
@@ -228,21 +228,36 @@
                 {{
                   !item.expenses
                     ? item.accType == 2
-                      ? item.accAmount
+                      ? item.accAmount.toLocaleString()
                       : '-'
                     : item.expenses.toLocaleString()
                 }}
               </div>
             </template>
             <template v-slot:[`item.action`]="{ item }">
-              <v-btn color="secondary" @click="photo(item)" v-if="!item.sum">
-                รูปภาพ
+              <v-btn
+                color="secondary"
+                @click="photo(item)"
+                v-if="!item.sum && item.accPicture"
+              >
+                ไฟล์เเนบ
               </v-btn>
+              <span v-if="!item.sum && !item.accPicture">-</span>
             </template>
           </v-data-table>
         </v-sheet>
-
-        <p class="ma-4">หมายเหตุ :</p>
+        <v-sheet>
+          <span class="d-flex align-center mb-2">
+            <p>หมายเหตุ :</p>
+          </span>
+          <v-textarea
+            v-model="DataAcc[tab - 1].notes"
+            bg-color="white"
+            variant="outlined"
+            no-resize
+            readonly
+          ></v-textarea>
+        </v-sheet>
       </div>
     </v-expand-transition>
 
@@ -256,7 +271,7 @@
           prepend-icon="mdi-printer-outline"
           class="mx-1"
           v-if="DataAccSet.length"
-          @click="print.exportPdf()"
+          @click="() => print(DataAccSet)"
         >
           พิมพ์
         </v-btn>
@@ -396,7 +411,7 @@ export default {
         },
         {
           title: 'หลักฐานอ้างอิง',
-          align: 'end',
+          align: 'center',
           key: 'action',
           sortable: false,
         },
@@ -412,7 +427,6 @@ export default {
       ],
     }
   },
-
   methods: {
     async choose() {
       //const v = row.item

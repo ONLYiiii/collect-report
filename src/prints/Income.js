@@ -1,87 +1,265 @@
 import pdf from '@/plugins/pdfmake-style'
+import { formatLicid } from '@/helpers/formatLicid'
 
-function exportPdf() {
-  const docDefination = {
-    pageMargins: [35, 50, 35, 30],
+function createTable(items) {
+  const incomeTable = {
+    table: {
+      widths: [25, 145, 50],
+      body: [
+        [
+          {
+            text: 'รายรับ',
+            style: 'tableHeader',
+            alignment: 'center',
+            colSpan: 3,
+          },
+          { text: '', style: 'tableHeader', alignment: 'center' },
+          { text: '', style: 'tableHeader', alignment: 'center' },
+        ],
+        [
+          {
+            text: 'ลำดับ',
+            style: 'tableHeader',
+            alignment: 'center',
+          },
+          {
+            text: 'รายการ',
+            style: 'tableHeader',
+            alignment: 'center',
+          },
+          {
+            text: 'จำนวนเงิน',
+            style: 'tableHeader',
+            alignment: 'center',
+          },
+        ],
+      ],
+
+      layout: {
+        hLineWidth: function (i, node) {
+          return i === 0 || i === node.table.body.length ? 1 : 0
+        },
+        vLineWidth: function (i, node) {
+          return 0
+        },
+        hLineColor: function (i, node) {
+          return i === 0 || i === node.table.body.length ? 'black' : 'black'
+        },
+      },
+    },
+  }
+
+  const expenseTable = {
+    table: {
+      widths: [25, 145, 50],
+      body: [
+        [
+          {
+            text: 'รายจ่าย',
+            style: 'tableHeader',
+            alignment: 'center',
+            colSpan: 3,
+          },
+          { text: '', style: ' head', alignment: 'center' },
+          { text: '', style: ' head', alignment: 'center' },
+        ],
+        [
+          {
+            text: 'ลำดับ',
+            style: 'tableHeader',
+            alignment: 'center',
+          },
+          {
+            text: 'รายการ',
+            style: 'tableHeader',
+            alignment: 'center',
+          },
+          {
+            text: 'จำนวนเงิน',
+            style: 'tableHeader',
+            alignment: 'center',
+          },
+        ],
+      ],
+      layout: {
+        hLineWidth: function (i, node) {
+          return i === 0 || i === node.table.body.length ? 1 : 0
+        },
+        vLineWidth: function (i, node) {
+          return 0
+        },
+        hLineColor: function (i, node) {
+          return i === 0 || i === node.table.body.length ? 'black' : 'black'
+        },
+      },
+    },
+  }
+
+  let incomeIndex = 1
+  let expenseIndex = 1
+  items.forEach((item) => {
+    if (item.accType === 1) {
+      incomeTable.table.body.push([
+        { text: incomeIndex, style: 'head', alignment: 'center' },
+        { text: item.accDetail, style: 'head', alignment: 'start' },
+        {
+          text: item.accAmount.toFixed(2),
+          style: 'head',
+          alignment: 'right',
+        },
+      ])
+      incomeIndex++
+    } else if (item.accType === 2) {
+      expenseTable.table.body.push([
+        { text: expenseIndex, style: 'head', alignment: 'center' },
+        { text: item.accDetail, style: 'head', alignment: 'start' },
+        {
+          text: item.accAmount.toFixed(2),
+          style: 'head',
+          alignment: 'right',
+        },
+      ])
+      expenseIndex++
+    } else if (item.accType === 3) {
+      incomeTable.table.body.push([
+        {
+          text: 'รวมรายรับทั้งหมด',
+          colSpan: 2,
+          style: 'head',
+          alignment: 'right',
+        },
+        {},
+        {
+          text: item.income.toFixed(2),
+          style: 'head',
+          alignment: 'right',
+        },
+      ])
+
+      expenseTable.table.body.push([
+        {
+          text: 'รวมรายจ่ายทั้งหมด',
+          colSpan: 2,
+          style: 'head',
+          alignment: 'right',
+        },
+        {},
+        {
+          text: item.expense.toFixed(2),
+          style: 'head',
+          alignment: 'right',
+        },
+      ])
+    }
+  })
+
+  return [incomeTable, expenseTable]
+}
+
+export default function exportPdf(items) {
+  console.log(items)
+  const [incomeTable, expenseTable] = createTable(items)
+
+  var docDefinition = {
     content: [
       {
-        text: `ประกาศยอดรับและจ่ายเงินและทรัพย์สิน`,
-        bold: true,
+        text: `ประกาศยอดรับและจ่ายเงินและทรัพย์สิน\nข้อมูลตามใบอนุญาตจัดให้มีการเรี่ยไร (แบบ ร๓) เลขที่ ${formatLicid(
+          items[0].licId
+        )}`,
         alignment: 'center',
-      },
-      {
-        text: `ข้อมูลตามใบอนุญาตจัดให้มีการเรี่ยไร (แบบ ร.๓) เลขที่ `,
-        bold: true,
-        alignment: 'center',
+        style: 'topHead',
       },
       {
         columns: [
           {
-            width: '50%',
-            color: '#444',
-            styles: '',
-            table: {
-              widths: [30, '*', 50],
-              headerRows: 1,
-              body: [
-                [{ text: 'รายรับ', bold: true, colSpan: 3, alignment: 'center' }, {}, {}],
-                [{ text: 'ลำดับ', bold: true, alignment: 'center' }, { text: 'รายการ', bold: true, alignment: 'center' }, { text: 'จำนวนเงิน', bold: true, alignment: 'center' }],
-              ]
-            }
+            width: 'auto',
+            stack: [
+              incomeTable,
+              {
+                marginLeft: 80,
+                marginTop: 10,
+                columnGap: 65,
+                columns: [
+                  {
+                    width: 'auto',
+                    stack: [
+                      {
+                        text: `รวมรายรับทั้งหมด`,
+                        alignment: 'left',
+                        style: 'head',
+                      },
+                      {
+                        text: `รวมจ่ายทั้งหมด`,
+                        alignment: 'left',
+                        style: 'head',
+                      },
+                      {
+                        text: `คงเหลือ`,
+                        alignment: 'left',
+                        style: 'head',
+                      },
+                    ],
+                  },
+                  {
+                    width: 'auto',
+                    stack: [
+                      {
+                        text: items[items.length - 2].income.toFixed(2),
+                        alignment: 'right',
+                        style: 'head',
+                      },
+                      {
+                        text: items[items.length - 2].expenses.toFixed(2),
+                        alignment: 'right',
+                        style: 'head',
+                      },
+                      {
+                        text: items[items.length - 1].income.toFixed(2),
+                        alignment: 'right',
+                        style: 'head',
+                        decoration: 'underline',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
           },
           {
-            width: '50%',
-            color: '#444',
-            styles: '',
-            table: {
-              widths: [30, '*', 50],
-              headerRows: 1,
-              body: [
-                [{ text: 'รายจ่าย', bold: true, colSpan: 3, alignment: 'center' }, {}, {}],
-                [{ text: 'ลำดับ', bold: true, alignment: 'center' }, { text: 'รายการ', bold: true, alignment: 'center' }, { text: 'จำนวนเงิน', bold: true, alignment: 'center' }],
-              ]
-            }
+            width: 'auto',
+            stack: [expenseTable],
           },
         ],
-      },
-      {
-        margin: [0, 15, 0, 0],
-        text: `รวมรายรับทั้งหมด `,
-        bold: true,
-      },
-      {
-        text: `รวมรายจ่ายทั้งหมด `,
-        bold: true,
-      },
-      {
-        text: `คงเหลือ `,
-        bold: true,
+        style: 'tableExample',
       },
     ],
 
     styles: {
-      header: {
-        fontSize: 20,
-        bold: true
+      tableHeader: {
+        bold: true,
+        fontSize: 13,
+        color: 'black',
+        fillColor: '#A6C9EC',
       },
-      header18: {
-        fontSize: 18,
-        bold: true
+      head: {
+        bold: true,
+        fontSize: 13,
+        color: 'black',
       },
-      body: {
-        fontSize: 16,
-        bold: false,
-        lineHeight: 1.1
+      topHead: {
+        bold: true,
+        fontSize: 15,
+        color: 'black',
+        font: 'THSarabunIT9',
       },
-      smallText: {
-        fontSize: 10,
-        bold: false,
-        lineHeight: 1.1
-      }
+      textBelow: {
+        bold: true,
+        fontSize: 13,
+        color: 'black',
+      },
     },
     defaultStyle: pdf.primaryStyle(),
   }
-  pdf.pdfPrintPreview(docDefination)
-}
 
-export default { exportPdf }
+  pdfMake.createPdf(docDefinition).open()
+}
