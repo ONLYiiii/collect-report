@@ -1,3 +1,4 @@
+import pdfMake from 'pdfmake/build/pdfmake'
 import pdf from '@/plugins/pdfmake-style'
 import { formatLicid } from '@/helpers/formatLicid'
 
@@ -39,7 +40,7 @@ function createTable(items) {
         hLineWidth: function (i, node) {
           return i === 0 || i === node.table.body.length ? 1 : 0
         },
-        vLineWidth: function (i, node) {
+        vLineWidth: function () {
           return 0
         },
         hLineColor: function (i, node) {
@@ -85,7 +86,7 @@ function createTable(items) {
         hLineWidth: function (i, node) {
           return i === 0 || i === node.table.body.length ? 1 : 0
         },
-        vLineWidth: function (i, node) {
+        vLineWidth: function () {
           return 0
         },
         hLineColor: function (i, node) {
