@@ -7,7 +7,7 @@
 
     <!-- Second Order -->
     <v-expand-transition>
-      <div v-if="select.Data.length && !DataAcc.length">
+      <div v-if="select.Data.length && !Object.keys(DataLicense).length">
         <v-sheet class="mb-6" align="center">
           <h3 class="mb-4">รายงาน ประกาศยอดรับจ่ายเงินและทรัพย์สิน</h3>
           <p>
@@ -85,7 +85,7 @@
 
     <!-- Fourth Order -->
     <v-expand-transition>
-      <div v-if="DataAcc.length && Object.keys(DataLicense).length">
+      <div v-if="Object.keys(DataLicense).length">
         <v-sheet class="mx-4 mb-4">
           <v-sheet align="center">
             <h3 class="mb-4">รายงาน ประกาศยอดรับจ่ายเงินและทรัพย์สิน</h3>
@@ -248,15 +248,8 @@
         </v-sheet>
         <v-sheet>
           <span class="d-flex align-center mb-2">
-            <p>หมายเหตุ :</p>
+            <p>หมายเหตุ : {{ notes }}</p>
           </span>
-          <v-textarea
-            v-model="DataAcc[tab - 1].notes"
-            bg-color="white"
-            variant="outlined"
-            no-resize
-            readonly
-          ></v-textarea>
         </v-sheet>
       </div>
     </v-expand-transition>
@@ -427,23 +420,40 @@ export default {
       ],
     }
   },
-  methods: {
-    async choose() {
-      //const v = row.item
-      //let getAcc = await api.getAccount(v.licSubreg, v.licRcode, v.licId)
-      let getAcc = await api.getAccount(12, 1301, 256700000007)
-      this.DataAcc = getAcc
-
-      this.chooseAcc(this.DataAcc[0], 0)
+  computed: {
+    notes() {
+      if (this.DataAcc.length) {
+        return this.DataAcc[this.tab - 1].notes
+      }
+      return ''
     },
+  },
+  methods: {
+    async choose(e, row) {
+      const v = row.item
 
-    async chooseAcc(v, index) {
       if (this.DataAccSet.length == 0) {
-        //let getLicense = await api.getLicense(v.licSubreg ,v.licRcode ,v.licId)
-        let getLicense = await api.getLicense(12, 1301, 256700000007)
+        let getLicense = await api.getLicense(v.licSubreg, v.licRcode, v.licId)
+        // let getLicense = await api.getLicense(12, 1301, 256700000007)
         this.DataLicense = getLicense || []
       }
 
+      let getAcc = await api.getAccount(v.licSubreg, v.licRcode, v.licId)
+      // let getAcc = await api.getAccount(12, 1301, 256700000007)
+
+      if (getAcc.status === 404) {
+        this.$swal({
+          icon: 'warning',
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่พบข้อมูลรอบรายรับรายจ่าย',
+        })
+      } else {
+        this.DataAcc = getAcc
+        this.chooseAcc(this.DataAcc[0], 0)
+      }
+    },
+
+    async chooseAcc(v, index) {
       let getAccSet = await api.getAccSet(
         v.licSubreg,
         v.licRcode,
@@ -515,8 +525,10 @@ export default {
       //   this.DataAccSet = []
       //   this.DataLicense = []
       // }
-      if (this.select.Data && !this.DataAcc.length) {
+      if (this.select.Data && !Object.keys(this.DataLicense).length) {
         this.select.Data = []
+      } else if (Object.keys(this.DataLicense).length && !this.DataAcc.length) {
+        this.DataLicense = []
       } else {
         this.DataAcc = []
         this.DataAccSet = []

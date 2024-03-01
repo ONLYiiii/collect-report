@@ -4,28 +4,34 @@
       <v-col cols="12" sm="6" md="3" lg="3">
         <v-autocomplete
           v-model="value.FRcode"
-          label="สถานที่ออกใบอนุญาต"
           variant="outlined"
           density="compact"
           :items="cc_Items.getListsCC()"
           item-value="code"
           item-title="description"
           hide-details="auto"
-          readonly
-        />
+          disabled
+        >
+          <template v-slot:label>
+            <span class="required">สถานที่ออกใบอนุญาต</span>
+          </template>
+        </v-autocomplete>
       </v-col>
       <v-col cols="12" sm="6" md="3" lg="3">
         <v-autocomplete
           v-model="value.LRcode"
-          label="อำเภอ"
           variant="outlined"
           density="compact"
           :items="$store.state.aa_Items"
           item-value="code"
           item-title="description"
           hide-details="auto"
-          readonly
-        />
+          disabled
+        >
+          <template v-slot:label>
+            <span class="required">อำเภอ</span>
+          </template>
+        </v-autocomplete>
       </v-col>
     </v-row>
     <v-row>
@@ -67,7 +73,9 @@
           label="วันที่ออกใบอนุญาต"
           density="compact"
           variant="outlined"
-          hide-details
+          :rules="[rules.datePickerStart]"
+          placeholder="วันที่ออกใบอนุญาต"
+          :is-search="isSearch"
         />
       </v-col>
       <v-col cols="12" sm="6" md="3">
@@ -76,7 +84,9 @@
           label="จนถึงวันที่"
           density="compact"
           variant="outlined"
-          hide-details
+          :rules="[rules.datePickerEnd]"
+          placeholder="จนถึงวันที่"
+          :is-search="isSearch"
         />
       </v-col>
       <v-col
@@ -103,9 +113,13 @@
 import cc_Items from '@/helpers/itemJson'
 import api from '@/helpers/api'
 import * as utils from '@/helpers/utils'
+import DatePicker from '@/views/components/DatePicker.vue'
 </script>
 <script>
 export default {
+  components: {
+    DatePicker,
+  },
   props: {
     data: {},
   },
@@ -125,6 +139,11 @@ export default {
         { value: 11, title: 'ร.3 ขออนุญาตจัดให้มีการเรี่ยไร มาตรา 6' },
         { value: 12, title: 'ร.3 ขออนุญาตจัดให้มีการเรี่ยไร มาตรา 8' },
       ],
+      rules: {
+        datePickerStart: (value) => !!value || 'กรุณากรอกวันที่เริ่มต้น',
+        datePickerEnd: (value) => !!value || 'กรุณากรอกวันที่สิ้นสุด',
+      },
+      isSearch: false,
     }
   },
   methods: {
@@ -139,8 +158,9 @@ export default {
         this.$swal({
           icon: 'warning',
           title: 'เกิดข้อผิดพลาด',
-          text: 'โปรดระบุเลขวันที่ออใบอนุญาต',
+          text: 'กรุณาระบุวันที่ออกใบอนุญาต',
         })
+        this.isSearch = true
       } else {
         this.$store.state.loading = true
 
@@ -214,3 +234,11 @@ export default {
   },
 }
 </script>
+
+<style>
+.required::after {
+  content: ' *';
+  color: red;
+  margin-right: 2px;
+}
+</style>
