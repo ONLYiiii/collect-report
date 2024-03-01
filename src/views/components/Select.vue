@@ -4,7 +4,6 @@
       <v-col cols="12" sm="6" md="3" lg="3">
         <v-autocomplete
           v-model="value.FRcode"
-          label="สถานที่ออกใบอนุญาต"
           variant="outlined"
           density="compact"
           :items="cc_Items.getListsCC()"
@@ -12,12 +11,15 @@
           item-title="description"
           hide-details="auto"
           disabled
-        />
+        >
+          <template v-slot:label>
+            <span class="required">สถานที่ออกใบอนุญาต</span>
+          </template>
+        </v-autocomplete>
       </v-col>
       <v-col cols="12" sm="6" md="3" lg="3">
         <v-autocomplete
           v-model="value.LRcode"
-          label="อำเภอ"
           variant="outlined"
           density="compact"
           :items="$store.state.aa_Items"
@@ -25,7 +27,11 @@
           item-title="description"
           hide-details="auto"
           disabled
-        />
+        >
+          <template v-slot:label>
+            <span class="required">อำเภอ</span>
+          </template>
+        </v-autocomplete>
       </v-col>
     </v-row>
     <v-row>
@@ -214,3 +220,11 @@ export default {
   },
 }
 </script>
+
+<style>
+.required::before {
+  content: '* ';
+  color: red;
+  margin-left: 2px;
+}
+</style>

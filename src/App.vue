@@ -61,7 +61,7 @@ export default {
     },
   },
   async created() {
-    // await api.postLogin(1101400284365)
+    // await api.postLogin(1739901966762)
 
     this.date = (await api.getDate()).date.toString()
     const profile = await api.getLogin()
@@ -71,7 +71,7 @@ export default {
       this.$store.state.Officer = profile.data
       this.$store.state.Rcode = this.officer.rcode
     } else {
-      location.href = 'https://dopa-iservice.dopa.go.th/'
+      // location.href = 'https://dopa-iservice.dopa.go.th/'
     }
 
     this.$store.state.loading = false
