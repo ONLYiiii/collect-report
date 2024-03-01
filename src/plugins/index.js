@@ -2,7 +2,6 @@ import vuetify from './vuetify'
 import router from '../router'
 import './axios.js'
 import './pdfmake-style.js'
-import DatePicker from '@cdglib/vue3-datepicker'
 import Requestor from '@cdglib/ilab-requestor'
 import DocumentsView from '@cdglib/ilab-documents'
 import MapLatLong from '@cdglib/vue3-map'
@@ -22,7 +21,6 @@ export function registerPlugins(app) {
   app.use(router)
   app.use(pinia)
   app.use(VueSweetalert2, options)
-  app.use(DatePicker)
   app.use(Requestor)
   app.use(DocumentsView)
   app.use(Vidle)

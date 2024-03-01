@@ -248,15 +248,8 @@
         </v-sheet>
         <v-sheet>
           <span class="d-flex align-center mb-2">
-            <p>หมายเหตุ :</p>
+            <p>หมายเหตุ : {{ notes }}</p>
           </span>
-          <v-textarea
-            v-model="notes"
-            bg-color="white"
-            variant="outlined"
-            no-resize
-            readonly
-          ></v-textarea>
         </v-sheet>
       </div>
     </v-expand-transition>
@@ -430,7 +423,7 @@ export default {
   computed: {
     notes() {
       if (this.DataAcc.length) {
-        this.DataAcc[this.tab - 1].notes
+        return this.DataAcc[this.tab - 1].notes
       }
       return ''
     },

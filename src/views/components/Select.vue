@@ -74,6 +74,8 @@
           density="compact"
           variant="outlined"
           :rules="[rules.datePickerStart]"
+          placeholder="วันที่ออกใบอนุญาต"
+          :is-search="isSearch"
         />
       </v-col>
       <v-col cols="12" sm="6" md="3">
@@ -83,6 +85,8 @@
           density="compact"
           variant="outlined"
           :rules="[rules.datePickerEnd]"
+          placeholder="จนถึงวันที่"
+          :is-search="isSearch"
         />
       </v-col>
       <v-col
@@ -109,9 +113,13 @@
 import cc_Items from '@/helpers/itemJson'
 import api from '@/helpers/api'
 import * as utils from '@/helpers/utils'
+import DatePicker from '@/views/components/DatePicker.vue'
 </script>
 <script>
 export default {
+  components: {
+    DatePicker,
+  },
   props: {
     data: {},
   },
@@ -135,6 +143,7 @@ export default {
         datePickerStart: (value) => !!value || 'กรุณากรอกวันที่เริ่มต้น',
         datePickerEnd: (value) => !!value || 'กรุณากรอกวันที่สิ้นสุด',
       },
+      isSearch: false,
     }
   },
   methods: {
@@ -149,8 +158,9 @@ export default {
         this.$swal({
           icon: 'warning',
           title: 'เกิดข้อผิดพลาด',
-          text: 'โปรดระบุเลขวันที่ออใบอนุญาต',
+          text: 'กรุณาระบุวันที่ออกใบอนุญาต',
         })
+        this.isSearch = true
       } else {
         this.$store.state.loading = true
 
