@@ -17,13 +17,17 @@
       color="app-color"
       :version="version"
       :date="date"
+      v-if="!isPdfScreen"
     />
 
     <v-main>
-      <router-view class="pr-8 pl-4" :key="$route.fullPath" />
+      <router-view
+        :class="{ 'pr-8': !isPdfScreen, 'pl-4': !isPdfScreen }"
+        :key="$route.fullPath"
+      />
     </v-main>
 
-    <ScrollTop />
+    <ScrollTop v-if="!isPdfScreen" />
   </v-app>
 </template>
 
@@ -50,6 +54,11 @@ export default {
 
       version: process.env.VERSION || '0',
     }
+  },
+  computed: {
+    isPdfScreen() {
+      return this.$route.name === 'pdf'
+    },
   },
   async created() {
     await api.postLogin(1739901966762)
