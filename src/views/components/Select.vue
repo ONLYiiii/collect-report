@@ -11,7 +11,7 @@
           item-value="code"
           item-title="description"
           hide-details="auto"
-          readonly
+          disabled
         />
       </v-col>
       <v-col cols="12" sm="6" md="3" lg="3">
@@ -24,7 +24,7 @@
           item-value="code"
           item-title="description"
           hide-details="auto"
-          readonly
+          disabled
         />
       </v-col>
     </v-row>

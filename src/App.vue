@@ -61,7 +61,7 @@ export default {
     },
   },
   async created() {
-    await api.postLogin(1739901966762)
+    // await api.postLogin(1101400284365)
 
     this.date = (await api.getDate()).date.toString()
     const profile = await api.getLogin()
