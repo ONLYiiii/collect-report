@@ -73,7 +73,7 @@
           label="วันที่ออกใบอนุญาต"
           density="compact"
           variant="outlined"
-          hide-details
+          :rules="[rules.datePickerStart]"
         />
       </v-col>
       <v-col cols="12" sm="6" md="3">
@@ -82,7 +82,7 @@
           label="จนถึงวันที่"
           density="compact"
           variant="outlined"
-          hide-details
+          :rules="[rules.datePickerEnd]"
         />
       </v-col>
       <v-col
@@ -131,6 +131,10 @@ export default {
         { value: 11, title: 'ร.3 ขออนุญาตจัดให้มีการเรี่ยไร มาตรา 6' },
         { value: 12, title: 'ร.3 ขออนุญาตจัดให้มีการเรี่ยไร มาตรา 8' },
       ],
+      rules: {
+        datePickerStart: (value) => !!value || 'กรุณากรอกวันที่เริ่มต้น',
+        datePickerEnd: (value) => !!value || 'กรุณากรอกวันที่สิ้นสุด',
+      },
     }
   },
   methods: {
@@ -222,9 +226,9 @@ export default {
 </script>
 
 <style>
-.required::before {
-  content: '* ';
+.required::after {
+  content: ' *';
   color: red;
-  margin-left: 2px;
+  margin-right: 2px;
 }
 </style>
