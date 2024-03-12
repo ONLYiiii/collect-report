@@ -171,64 +171,72 @@ export default function exportPdf(items) {
         style: 'topHead',
       },
       {
-        columns: [
+        stack: [
           {
-            width: 'auto',
-            stack: [
-              incomeTable,
+            columns: [
               {
-                marginLeft: 80,
-                marginTop: 10,
-                columnGap: 65,
-                columns: [
-                  {
-                    width: 'auto',
-                    stack: [
-                      {
-                        text: `รวมรายรับทั้งหมด`,
-                        alignment: 'left',
-                        style: 'head',
-                      },
-                      {
-                        text: `รวมจ่ายทั้งหมด`,
-                        alignment: 'left',
-                        style: 'head',
-                      },
-                      {
-                        text: `คงเหลือ`,
-                        alignment: 'left',
-                        style: 'head',
-                      },
-                    ],
-                  },
-                  {
-                    width: 'auto',
-                    stack: [
-                      {
-                        text: items[items.length - 2].income.toFixed(2),
-                        alignment: 'right',
-                        style: 'head',
-                      },
-                      {
-                        text: items[items.length - 2].expenses.toFixed(2),
-                        alignment: 'right',
-                        style: 'head',
-                      },
-                      {
-                        text: items[items.length - 1].income.toFixed(2),
-                        alignment: 'right',
-                        style: 'head',
-                        decoration: 'underline',
-                      },
-                    ],
-                  },
-                ],
+                width: 'auto',
+                stack: [incomeTable],
+              },
+              {
+                width: 'auto',
+                stack: [expenseTable],
               },
             ],
           },
           {
-            width: 'auto',
-            stack: [expenseTable],
+            marginLeft: 50,
+            marginTop: 30,
+            columnGap: 90,
+            columns: [
+              {
+                width: 'auto',
+                stack: [
+                  {
+                    text: `รวมรายรับทั้งหมด`,
+                    alignment: 'left',
+                    style: 'head',
+                  },
+                  {
+                    text: `รวมจ่ายทั้งหมด`,
+                    alignment: 'left',
+                    style: 'head',
+                  },
+                  {
+                    text: `คงเหลือ`,
+                    alignment: 'left',
+                    style: 'head',
+                  },
+                ],
+              },
+              {
+                width: 'auto',
+                stack: [
+                  {
+                    text:
+                      items[items.length - 2].income === '-'
+                        ? '0.00'
+                        : items[items.length - 2].income.toFixed(2),
+                    alignment: 'right',
+                    style: 'head',
+                  },
+                  {
+                    text:
+                      items[items.length - 2].expense === '-'
+                        ? '0.00'
+                        : items[items.length - 2].expense.toFixed(2),
+                    alignment: 'right',
+                    style: 'head',
+                  },
+                  {
+                    text: items[items.length - 1].income.toFixed(2),
+                    alignment: 'right',
+                    style: 'head',
+                    decoration: 'underline',
+                  },
+                ],
+              },
+            ],
           },
         ],
         style: 'tableExample',
