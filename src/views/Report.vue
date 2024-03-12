@@ -509,7 +509,8 @@ export default {
           this.pictureDialog = true
         } else {
           window.sessionStorage.setItem('fileBase64', response.accPicture)
-          window.open('/pdf')
+          const pdfRouter = this.$router.resolve({ name: 'pdf' })
+          window.open(pdfRouter.href, '_blank')
         }
       } catch (error) {
         console.error('Error fetching getPhoto:', error)

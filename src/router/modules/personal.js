@@ -12,7 +12,7 @@ export default [
     component: Report,
   },
   {
-    path: '/pdf',
+    path: '/report/pdf',
     name: 'pdf',
     component: pdf,
   },
