@@ -3,6 +3,7 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import colors from 'vuetify/lib/util/colors'
 import * as Facade from 'vue-input-facade'
+import { th, en } from 'vuetify/locale'
 
 export default createVuetify({
   directives: {
@@ -24,5 +25,10 @@ export default createVuetify({
         },
       },
     },
+  },
+  locale: {
+    locale: 'th',
+    fallback: 'th',
+    messages: { th, en },
   },
 })
