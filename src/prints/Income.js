@@ -1,6 +1,10 @@
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdf from '@/plugins/pdfmake-style'
 import { formatLicid } from '@/helpers/formatLicid'
+const numFormat = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 2,
+  minimumFractionDigits: 2,
+})
 
 function createTable(items) {
   const incomeTable = {
@@ -104,7 +108,7 @@ function createTable(items) {
         { text: incomeIndex, style: 'head', alignment: 'center' },
         { text: item.accDetail, style: 'head', alignment: 'start' },
         {
-          text: item.accAmount.toFixed(2),
+          text: numFormat.format(item.accAmount),
           style: 'head',
           alignment: 'right',
         },
@@ -115,7 +119,7 @@ function createTable(items) {
         { text: expenseIndex, style: 'head', alignment: 'center' },
         { text: item.accDetail, style: 'head', alignment: 'start' },
         {
-          text: item.accAmount.toFixed(2),
+          text: numFormat.format(item.accAmount),
           style: 'head',
           alignment: 'right',
         },
@@ -131,7 +135,7 @@ function createTable(items) {
         },
         {},
         {
-          text: item.income.toFixed(2),
+          text: numFormat.format(item.income),
           style: 'head',
           alignment: 'right',
         },
@@ -146,7 +150,7 @@ function createTable(items) {
         },
         {},
         {
-          text: item.expense.toFixed(2),
+          text: numFormat.format(item.expense),
           style: 'head',
           alignment: 'right',
         },
@@ -198,7 +202,7 @@ export default function exportPdf(items) {
                     style: 'head',
                   },
                   {
-                    text: `รวมจ่ายทั้งหมด`,
+                    text: `รวมรายจ่ายทั้งหมด`,
                     alignment: 'left',
                     style: 'head',
                   },
@@ -216,20 +220,20 @@ export default function exportPdf(items) {
                     text:
                       items[items.length - 2].income === '-'
                         ? '0.00'
-                        : items[items.length - 2].income.toFixed(2),
+                        : numFormat.format(items[items.length - 2].income),
                     alignment: 'right',
                     style: 'head',
                   },
                   {
                     text:
-                      items[items.length - 2].expense === '-'
+                      items[items.length - 2].expenses === '-'
                         ? '0.00'
-                        : items[items.length - 2].expense.toFixed(2),
+                        : numFormat.format(items[items.length - 2].expenses),
                     alignment: 'right',
                     style: 'head',
                   },
                   {
-                    text: items[items.length - 1].income.toFixed(2),
+                    text: numFormat.format(items[items.length - 1].income),
                     alignment: 'right',
                     style: 'head',
                     decoration: 'underline',
