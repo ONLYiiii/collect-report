@@ -9,7 +9,7 @@
           variant="text"
         ></v-btn>
       </v-card-title>
-      <v-card-text>ffff</v-card-text>
+
       <v-card-text class="pa-5">
         <v-img :src="props.pictureBase64" height="65vh" width="50vw"></v-img>
       </v-card-text>
