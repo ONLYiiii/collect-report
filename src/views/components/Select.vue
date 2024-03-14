@@ -10,7 +10,7 @@
           item-value="code"
           item-title="description"
           hide-details="auto"
-          disabled
+          :disabled="!isDisabled"
         >
           <template v-slot:label>
             <span class="required">สถานที่ออกใบอนุญาต</span>
@@ -26,7 +26,7 @@
           item-value="code"
           item-title="description"
           hide-details="auto"
-          disabled
+          :disabled="!isDisabled"
         >
           <template v-slot:label>
             <span class="required">อำเภอ</span>
@@ -190,6 +190,11 @@ export default {
           })
         }
       }
+    },
+  },
+  computed: {
+    isDisabled() {
+      return this.$store.state.Rcode === '0083'
     },
   },
 
