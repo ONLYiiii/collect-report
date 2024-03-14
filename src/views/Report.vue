@@ -209,9 +209,9 @@
                 {{
                   !item.income
                     ? item.accType == 1
-                      ? item.accAmount.toLocaleString()
+                      ? formatNumber(item.accAmount)
                       : '-'
-                    : item.income.toLocaleString()
+                    : formatNumber(item.income)
                 }}
               </div>
             </template>
@@ -228,9 +228,9 @@
                 {{
                   !item.expenses
                     ? item.accType == 2
-                      ? item.accAmount.toLocaleString()
+                      ? formatNumber(item.accAmount)
                       : '-'
-                    : item.expenses.toLocaleString()
+                    : formatNumber(item.expenses)
                 }}
               </div>
             </template>
@@ -299,6 +299,10 @@ export default {
   },
   data() {
     return {
+      numFormat: new Intl.NumberFormat('en-US', {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+      }),
       tab: 1,
       page: 1,
       per: 10,
@@ -535,6 +539,9 @@ export default {
         this.DataAccSet = []
         this.DataLicense = []
       }
+    },
+    formatNumber(number) {
+      return this.numFormat.format(number)
     },
   },
 }
