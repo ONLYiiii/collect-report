@@ -3,16 +3,16 @@ import pdf from '@/views/pdf.vue'
 
 export default [
   {
-    path: '/',
-    redirect: 'report',
+    path: '/collect-report',
+    redirect: '/collect-report/report',
   },
   {
-    path: '/report',
+    path: '/collect-report/report',
     name: 'report',
     component: Report,
   },
   {
-    path: '/report/pdf',
+    path: '/collect-report/report/pdf',
     name: 'pdf',
     component: pdf,
   },
