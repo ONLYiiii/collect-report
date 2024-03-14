@@ -125,7 +125,8 @@ function createTable(items) {
         },
       ])
       expenseIndex++
-    } else if (item.accType === 3) {
+    } else if (item.sum === 1) {
+      console.log(item)
       incomeTable.table.body.push([
         {
           text: 'รวมรายรับทั้งหมด',
@@ -150,7 +151,7 @@ function createTable(items) {
         },
         {},
         {
-          text: numFormat.format(item.expense),
+          text: numFormat.format(item.expenses),
           style: 'head',
           alignment: 'right',
         },
